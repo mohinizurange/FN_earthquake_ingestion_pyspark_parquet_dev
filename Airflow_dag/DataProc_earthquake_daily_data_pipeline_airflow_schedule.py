@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'M_Airflow',
     'retrives': 2,
-    'depends_on_past': False,
+    'depends_on_past': False,# Tasks do not depend on previous runs
     'retry_delay': timedelta(minutes=1),
     'start_date': datetime(2024, 11, 10),
 }
@@ -17,7 +17,7 @@ with DAG(
         'DataProc_Earthquake_daily_dataload_schedule',
         default_args=default_args,
         schedule_interval='0 10 * * *',  # This sets the DAG to run daily at 10 AM
-        catchup=False,
+        catchup=False, # Do not run past schedules if the DAG is missed
 ) as dag:
     # Step 1: Create Dataproc Cluster
     create_cluster = DataprocCreateClusterOperator(
@@ -47,15 +47,15 @@ with DAG(
                 "optional_components": ["JUPYTER"]
             },
             "endpoint_config": {
-                "enable_http_port_access": True
+                "enable_http_port_access": True  # Allow access to the Dataproc UI via HTTP
             }
         },
-        use_if_exists=True,
-        delete_on_error=True
+        use_if_exists=True,# Use the cluster if it already exists
+        delete_on_error=True # Delete the cluster if an error occurs
     )
 
     # Step 2: Submit PySpark Job with BigQuery connector JAR
-    job_id='earthquake_pyspark_job_daily'+ datetime.now().strftime('%Y%m%d_%H%M%S')
+    job_id='earthquake_pyspark_job_daily'+ datetime.now().strftime('%Y%m%d_%H%M%S') #dataproc cluster wont allow duplicate job id so
     submit_pyspark_job = DataprocSubmitJobOperator(
         task_id="submit_pyspark_job",
         project_id="spark-learning-43150",

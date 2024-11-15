@@ -77,12 +77,13 @@ def earthqueake_pipeline():
 
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = extracted_data_df.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg = e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg)
 
     # Function 2: Write Parquet Data to GCS (landing location)
     try:
@@ -92,12 +93,13 @@ def earthqueake_pipeline():
         util_obj.writeParquetDataintoGCS(spark, extracted_data_df, cnf.eq_landing_gcs_loc)
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = extracted_data_df.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg=e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg)
 
     # Function 3: Read parquest file from GCS (landing location)
     try:
@@ -107,12 +109,13 @@ def earthqueake_pipeline():
         raw_data = util_obj.readParquetFilefromGCS(spark, cnf.eq_landing_gcs_loc)
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = raw_data.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg=e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg)
 
     # Function 4: extract the required data and flatten it as well as apply transformation
     try:
@@ -122,12 +125,13 @@ def earthqueake_pipeline():
         clean_data = util_obj.extractReqDataFlattenApplyTrans(raw_data)
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = clean_data.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg=e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc,error_msg)
 
     # Function 5: write clean data into gcs in parquet format (silver location)
     try:
@@ -137,12 +141,13 @@ def earthqueake_pipeline():
         util_obj.writeParquetDataintoGCS(spark, clean_data, cnf.eq_silver_gcs_loc)
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = clean_data.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg = e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc, error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc, error_msg)
 
     # Function 6: write clean data into bigquery table
     try:
@@ -152,12 +157,13 @@ def earthqueake_pipeline():
         util_obj.writeDataintoBigquery(cnf.eq_bigquery_tbl_loc, clean_data)
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "successful"
         process_record = clean_data.count()
+        error_msg = None
     except Exception as e:
         end_time, status = datetime.now().strftime('%Y%m%d_%H%M%S'), "fail"
         process_record = 0
         error_msg = e
         logging.error(f"Error in {function_name}: {e}")
-    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc, error_msg=None)
+    util_obj.log_audit(spark, job_id, pipeline_name, function_name, start_time, end_time, status, process_record,cnf.eq_audit_tbl_loc, error_msg)
 
 
 if __name__ == '__main__':

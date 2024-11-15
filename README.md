@@ -1,1 +1,1 @@
-# FN_earthquake_ingestion_pyspark_parquet_dev
+# earthquake_ingestion_pyspark_parquet_dev
